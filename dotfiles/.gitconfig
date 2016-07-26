@@ -1,0 +1,54 @@
+[user]
+        name = Fotis Athineos
+        email = fotis.athineos@gmail.com
+        signingkey = 790B568F1F21FB07A34FDD59AE4C3E1AA3A33E92
+[color]
+        branch = auto
+        diff = auto
+        interactive = auto
+        status = auto
+        ui = true
+[color "branch"]
+        current = yellow reverse
+        local = yellow
+        remote = green
+[color "diff"]
+        meta = yellow
+        frag = magenta
+        old = red
+        new = green
+[color "status"]
+        added = green
+        changed = red
+        untracked = cyan
+[core]
+        autocrlf = false
+        savecrlf = false
+        editor = vim
+        pager = less -F -X
+        excludesfile = ~/.gitignore
+[alias]
+        st = status
+        pl = pull
+        pr = pull --rebase
+        ps = push
+        ct = commit -S -m
+        ctam = commit --amend --no-edit
+        co = checkout
+        ds = diff --staged
+        who = shortlog -s
+        l = log --pretty=oneline --abbrev-commit --graph --decorate -3
+        lc = log ORIG_HEAD.. --stat --no-merges
+        lol = log --pretty=oneline --abbrev-commit --graph --decorate
+        br = branch
+        wu = log --stat origin..@{0}
+        wup = log -p origin..@{0}
+        h = log --oneline --author='Fotis Athineos' --since='14 day ago'
+        lot = log --pretty=format:'%h - %an, %ar : %s' --decorate --graph
+        dif = difftool
+[push]
+        default = tracking
+[commit]
+        gpgsign = true
+[gpg]
+        program = gpg

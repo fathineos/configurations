@@ -1,0 +1,177 @@
+###############################################################################
+# GENERAL ALIASES
+###############################################################################
+
+# Locations
+alias downloads="cd $HOME/Downloads"
+alias ..='cd ..'
+alias ...='cd ../..'
+
+if [[ $(uname) == 'Linux' ]]; then
+    alias upd='sudo apt update -qq && sudo apt --force-yes -q upgrade'
+    alias ls='ls --color=auto'
+elif [[ $(uname) == 'Darwin' ]]; then
+    alias upd='brew update && brew upgrade'
+fi
+
+# Listing
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Other
+alias conf_update="cd $HOME/configurations && git fetch && git pull --ff-only origin master"
+alias e=$EDITOR
+
+###############################################################################
+# UTILS
+###############################################################################
+
+function kills { sudo kill -15 $(pgrep "$1"); }
+function killf { sudo kill -9 $(pgrep "$1"); }
+
+# cli google translate
+alias trans='docker run --name=translate-shell --rm fathineos/translate-shell'
+
+# cli search on commandlinefu.com
+alias fu='docker run --name=commandlinefu --rm fathineos/commandlinefu'
+
+alias youtube-dl-mp3="docker run --name=youtube-dl --rm -u $(id -u):$(id -g) -v $PWD:/data vimagick/youtube-dl -x --audio-format mp3"
+wtr() { city=${1-athens}; curl http://wttr.in/${city}; }
+myip() { curl http://ipecho.net/plain; }
+
+# glances: System monitoring tool in python
+# @see https://nicolargo.github.io/glances/
+alias docker_glances='docker run --name=glances --rm -v /var/run/docker.sock:/var/run/docker.sock:ro --pid host -it fathineos/glances'
+
+# search devdocs documentation shortcut in browser
+function docs() {
+    $URL=''
+    ARGS=$@
+    $URL="https://devdocs.io/#q=${ARGS// /+}"
+    echo $URL
+    open $URL
+}
+
+# simplified, common man pages
+function tldr() {
+    $URL=''
+    ARGS=$@
+    URL="cht.sh/${ARGS// /+}"
+    echo $URL
+    curl $URL
+}
+
+function story() {
+    if [ -f "$HOME/stories/TX-$1.md" ]; then
+        open "$HOME/stories/TX-$1.md"
+    else
+        print 'Story TX-$1.md not exists'
+    fi
+}
+
+# cross OSX notifications
+function notify() {
+    if [[ $(uname) == 'Linux' ]]; then
+        notify-send 'Shell sais' $1 --icon=dialog-information
+    elif [[ $(uname) == 'Darwin' ]]; then
+        reattach-to-user-namespace osascript \
+            -e 'display notification "'$1'" with title "Shell sais"'
+    fi
+}
+
+# cli search for torrents
+function torrents {
+    docker run --name=torrench --rm -ti \
+        -v $HOME/torrents:/root/Downloads/torrench \
+        jaymoulin/torrench --risky -k \"$1\"
+}
+
+function subs {
+    if [[ -z $1 ]]; then
+        LANGUAGE_CODE='el'
+    else
+        LANGUAGE_CODE=$1
+    fi
+    PWD="`pwd`"
+    docker run --rm --name=subliminal -v $PWD:/movie -it diaoulael/subliminal \
+        download -l ${LANGUAGE_CODE} /movie;
+}
+
+###############################################################################
+# REUSABLE FUNCTIONS
+###############################################################################
+
+alias psgrep='ps aux | grep -v grep | grep -i -e VSZ -e'
+
+function parent_process_id() {
+    ps hf -opid -C $1 | awk '{ print $1; exit }'
+}
+
+###############################################################################
+# HARDWARE
+###############################################################################
+
+if [[ $(uname) == 'Darwin' ]]; then
+    alias wifi_off='networksetup -setairportpower en0 off'
+    alias wifi_on='networksetup -setairportpower en0 on'
+    alias bluetooth_off='blueutil --power off'
+    alias bluetooth_on='blueutil --power on'
+    alias home='bluetooth_on; wifi_on'
+elif [[ $(uname) == 'Linux' ]]; then
+    function xinput_device_id {
+        xinput list | grep $1 | awk '{print $6}' | cut -c4-
+    }
+    function xinput_toggle_device {
+        device=$(xinput_device_id $1);
+        state=$(xinput list-props "$device" | grep "Device Enabled" | grep -o "[01]$");
+
+        if [ $state -eq '1' ]; then
+            print "Disabling device $1"
+            xinput --disable $device;
+        else
+            print "Enabling device $1"
+            xinput --enable $device;
+        fi
+    }
+
+    alias trackpad_toggle='xinput_toggle_device TouchPad'
+fi
+
+###############################################################################
+# OTHER
+###############################################################################
+
+alias ctags_php="ctags -h '.php' --recurse --languages=PHP --totals=yes --tag-relative=yes --PHP-kinds=+cf --regex-PHP='/abstract class ([^ ]*)/\1/c/' --regex-PHP='/interface ([^ ]*)/\1/c/' --regex-PHP='/trait ([^ ]*)/\1/c/' --regex-PHP='/(public |static |abstract |protected |private )+ function +([^ \(]*)/\2/f/'"
+
+alias jtags="ctags -h '.js' --recurse --langdef=js --langmap=js:.js -f .tags ."
+
+alias ctags_python="ctags --recurse --fields=+l --languages=python --python-kinds=-iv --exclude=env --exclude=.git --exclude=.tox -f .tags ."
+
+###############################################################################
+# SECURITY
+###############################################################################
+
+alias encrypt="gpg --encrypt --recipient 'File Encryption Key'"
+
+function decrypt() {
+    gpg --output $2 --decrypt $1
+}
+
+function gen_pass() {
+    if [[ $(uname) == 'Darwin' ]]; then
+        echo -n "$1$2" | md5 | base64 | head -c 16 | pbcopy
+    elif [[ $(uname) == 'Linux' ]]; then
+        echo -n "$1$2" | md5sum | base64 | head -c 16
+    fi
+}
+
+function upload_current_dir_to_nas() {
+ftp $ftp_nas_user@$ip_nas <<END_SCRIPT
+cd $ftp_nas_download_dir
+mkdir ${PWD##*/}
+prompt
+mput *
+quit
+END_SCRIPT
+}

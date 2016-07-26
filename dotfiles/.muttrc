@@ -1,0 +1,66 @@
+### save and sync my sent messages
+set record="~/Mail/fotis.transifex/Sent Mail"
+set spoolfile="~/Mail/fotis.transifex/INBOX"
+# set header cache
+set header_cache="~/Mail/hcache"
+# needed for maildir format
+set mbox_type=maildir
+set folder="~/Mail/fotis.transifex/"
+set timeout=10
+set from="Fotis Athineos <fotis@transifex.com>"
+
+# prefer plain text
+alternative_order text/plain text/enriched text/html
+
+# auto convert text/html MIME type to text/plain
+auto_view text/html
+
+# IMAP and INBOX (this should map to any existing IMAP folders)
+mailboxes =INBOX \
+=General \
+="Cron Daemon" \
+=General \
+=Metrics \
+=Personal \
+=Retros \
+=Sentry \
+=Stories \
+=Sent \
+=Stories \
+=Tech \
+=Drafts \
+=Junk \
+=Trash
+
+set sort = reverse-date-received
+
+source ~/.mutt/colortheme
+
+auto_view text/html
+
+set new_mail_command='notify-send "%n New e-mail(s) arrived!"'
+
+set sidebar_visible = yes
+set sidebar_width = 14
+
+#------------------------------------------------------------
+# Vi Key Bindings
+#------------------------------------------------------------
+
+# Moving around
+bind attach,browser,index       g   noop
+bind attach,browser,index       gg  first-entry
+bind attach,browser,index       G   last-entry
+bind pager                      g  noop
+bind pager                      gg  top
+bind pager                      G   bottom
+bind pager                      k   previous-line
+bind pager                      j next-line
+bind attach,browser,pager,index \Cu half-up
+bind attach,browser,pager,index \Cd half-down
+
+bind pager,index                d noop
+bind pager,index                dd delete-message
+bind pager,index                gt sidebar-next
+bind pager,index                gT sidebar-prev
+bind pager,index                go sidebar-open
