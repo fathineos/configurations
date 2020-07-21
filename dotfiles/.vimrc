@@ -2,17 +2,17 @@
 " CUSTOM SHORTCUTS
 "######################################################################
 
-" <Ctrl-t>         Open new tab
-" <Ctrl-c>         Copy in clipboard
-" <Ctrl-d>         Cut in clipboard
-" <Space>          Toggle folding
-" <Ctrl-b>         Toggle nerdtree
-" <Ctrl-f>         Find current open file on nerdtree
-" <Ctrl-q>         Toggle tagbar
-" <Ctrl-p>         Find files with fzf
+" <c-Space> Toggle comment
 " leader key is "\"
-" <Leader-c-Space> Toggle comment
-" <Leader-d>       Add python debugger
+" <leader><Ctrl-t>  Open new tab
+" <leader><Ctrl-c>  Copy in clipboard
+" <leader><Ctrl-d>  Cut in clipboard
+" <leader><Space>   Toggle folding
+" <leader><Ctrl-b>  Toggle nerdtree
+" <leader><Ctrl-f>  Find current open file on nerdtree
+" <leader><Ctrl-q>  Toggle tagbar
+" <leader><Ctrl-p>  Find files with fzf
+" <leader>d         Add python debugger
 
 "######################################################################
 " VUNDLE PACKAGES
@@ -107,11 +107,11 @@ call plug#end()
 "######################################################################
 
 " tagbar
-nmap <C-q> :TagbarToggle<CR>
+nmap <leader><C-q> :TagbarToggle<CR>
 
 " nerdtree
-map <silent> <C-b> :NERDTreeToggle<CR>
-map <C-f> :NERDTreeFind<CR>
+map <leader><C-b> :NERDTreeToggle<CR>
+map <leader><C-f> :NERDTreeFind<CR>
 
 " markdown
 let g:vim_markdown_folding_level = 4
@@ -133,7 +133,7 @@ call deoplete#custom#option('ignore_sources', {'_': ['buffer']})
 inoremap <expr> <C-i> pumvisible() ? "\<C-n>" : "\<C-i>"
 
 " fzf wrapper
-map <C-p> :Files<CR>
+map <leader><C-p> :Files<CR>
 
 " Use Ag for search
 " let g:ackprg = 'ag --nogroup --nocolor --column'
@@ -174,23 +174,34 @@ vnoremap <space> zf
 
 " visual copy/cut to os clipboard
 if has("unix")
-  vnoremap <C-c> "+y
-  vnoremap <C-d> "+d
+  vnoremap <leader><C-c> "+y
+  vnoremap <leader><C-d> "+d
   let s:uname = system("uname -s")
   if s:uname == "Darwin"
-    vmap <C-c> :!pbcopy<CR>
-    vmap <C-d> :w !pbcopy<CR><CR>
+    vmap <leader><C-c> :!pbcopy<CR>
+    vmap <leader><C-d> :w !pbcopy<CR><CR>
   endif
 endif
 
-map <C-t> :tabnew<CR>
+map <leader><C-t> :tabnew<CR>
 
-" insert pdb alias
-map <Leader>d :call InsertLine()<CR>
-function! InsertLine()
-  let trace = expand("__import__('pdb').set_trace()")
-  execute "normal o".trace
+" insert debugger depending on file format
+let g:debugger_map = {
+      \ 'javascript' : 'debugger',
+      \ 'python' : '__import__("pdb").set_trace()',
+      \}
+
+function! InsertDebugger()
+  if has_key(g:debugger_map, &filetype)
+    let text = get(g:debugger_map, &filetype)
+    call feedkeys('o', 'i')
+    call feedkeys(text)
+    call feedkeys("\<Esc>")
+  else
+    echo 'No mapping defined for filetype: ' . &filetype
+  endif
 endfunction
+map <leader>d :call InsertDebugger()<cr>
 
 "######################################################################
 " FORMATTING
@@ -232,6 +243,17 @@ set cul " highlight current line
 set hls
 
 set foldmethod=indent
+
+" Javascript
+autocmd FileType javascript set shiftwidth=2
+autocmd FileType javascript set softtabstop=2
+autocmd FileType javascript set tabstop=2
+autocmd FileType javascript set expandtab
+
+" HTML
+autocmd FileType html set shiftwidth=2
+autocmd FileType html set softtabstop=2
+autocmd FileType html set tabstop=2
 
 "######################################################################
 " VIM/NVIM SETTINGS
