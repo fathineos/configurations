@@ -20,7 +20,6 @@ alias la='ls -A'
 alias l='ls -CF'
 
 # Other
-alias conf_update="cd $HOME/configurations && git fetch && git pull --ff-only origin master"
 alias e=$EDITOR
 
 ###############################################################################
@@ -62,14 +61,6 @@ function tldr() {
     curl $URL
 }
 
-function story() {
-    if [ -f "$HOME/stories/TX-$1.md" ]; then
-        open "$HOME/stories/TX-$1.md"
-    else
-        print 'Story TX-$1.md not exists'
-    fi
-}
-
 # cross OSX notifications
 function notify() {
     if [[ $(uname) == 'Linux' ]]; then
@@ -82,9 +73,7 @@ function notify() {
 
 # cli search for torrents
 function torrents {
-    docker run --name=torrench --rm -ti \
-        -v $HOME/torrents:/root/Downloads/torrench \
-        jaymoulin/torrench --risky -k \"$1\"
+    docker run --rm -it --name=we-get macgyverbass/we-get --search $@
 }
 
 function subs {
@@ -97,6 +86,11 @@ function subs {
     docker run --rm --name=subliminal -v $PWD:/movie -it diaoulael/subliminal \
         download -l ${LANGUAGE_CODE} /movie;
 }
+
+###############################################################################
+# SERVICES
+###############################################################################
+alias ttrss='docker run -d --restart=always --link ttrss-db:db -e TTRSS_PORT=8080 -e DB_HOST=db -e DB_NAME=ttrss -e DB_USER=ttrss -e DB_PASS=ttrss -e DB_PORT=5432 -e TTRSS_SELF_URL=localhost:8080 -e TTRSS_PROTO=http -e TTRSS_URL=pi.rss:8080 -p 0.0.0.0:8080:8080 --name ttrss ttrss'
 
 ###############################################################################
 # REUSABLE FUNCTIONS
@@ -144,9 +138,16 @@ fi
 
 alias ctags_php="ctags -h '.php' --recurse --languages=PHP --totals=yes --tag-relative=yes --PHP-kinds=+cf --regex-PHP='/abstract class ([^ ]*)/\1/c/' --regex-PHP='/interface ([^ ]*)/\1/c/' --regex-PHP='/trait ([^ ]*)/\1/c/' --regex-PHP='/(public |static |abstract |protected |private )+ function +([^ \(]*)/\2/f/'"
 
-alias jtags="ctags -h '.js' --recurse --langdef=js --langmap=js:.js -f .tags ."
+alias ctags_js="ctags -h '.js' --recurse --langdef=js --langmap=js:.js -f .tags ."
 
 alias ctags_python="ctags --recurse --fields=+l --languages=python --python-kinds=-iv --exclude=env --exclude=.git --exclude=.tox -f .tags ."
+
+# switch to performance
+alias performance="echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
+# switch to powersave
+alias powersave="echo powersave | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
+# check which profile you're using now
+alias power="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 
 ###############################################################################
 # SECURITY
@@ -156,22 +157,4 @@ alias encrypt="gpg --encrypt --recipient 'File Encryption Key'"
 
 function decrypt() {
     gpg --output $2 --decrypt $1
-}
-
-function gen_pass() {
-    if [[ $(uname) == 'Darwin' ]]; then
-        echo -n "$1$2" | md5 | base64 | head -c 16 | pbcopy
-    elif [[ $(uname) == 'Linux' ]]; then
-        echo -n "$1$2" | md5sum | base64 | head -c 16
-    fi
-}
-
-function upload_current_dir_to_nas() {
-ftp $ftp_nas_user@$ip_nas <<END_SCRIPT
-cd $ftp_nas_download_dir
-mkdir ${PWD##*/}
-prompt
-mput *
-quit
-END_SCRIPT
 }

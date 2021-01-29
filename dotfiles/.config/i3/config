@@ -93,7 +93,7 @@ bindsym $mod+9 workspace $workspace9
 bindsym $mod+0 workspace $workspace10
 
 # default workspaces
-for_window [class=".*(F|f)irefox.*"] move to workspace $workspace2
+for_window [class=".*(F|f)irefox.*"] move to workspace $workspace5
 for_window [class="Thunderbird"] move to workspace $workspace8
 for_window [class="Slack"] move to workspace $workspace9
 for_window [class="Spotify"] move to workspace $workspace10
@@ -103,7 +103,7 @@ exec --no-startup-id nm-applet
 # bluetooth manager applet
 exec --no-startup-id blueman-applet
 
-exec --no-startup-id firefox
+exec --no-startup-id chromium
 
 # reload the configuration file
 bindsym $mod+Shift+c reload

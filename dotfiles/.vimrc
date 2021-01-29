@@ -2,11 +2,10 @@
 " CUSTOM SHORTCUTS
 "######################################################################
 
-" <c-Space> Toggle comment
+" <c-Space>         Toggle comment
+" <Ctrl-c>          Copy in clipboard
 " leader key is "\"
 " <leader><Ctrl-t>  Open new tab
-" <leader><Ctrl-c>  Copy in clipboard
-" <leader><Ctrl-d>  Cut in clipboard
 " <leader><Space>   Toggle folding
 " <leader><Ctrl-b>  Toggle nerdtree
 " <leader><Ctrl-f>  Find current open file on nerdtree
@@ -52,16 +51,16 @@ Plug 'neomake/neomake'
 Plug 'airblade/vim-gitgutter'
 
 " Autocomplete
-if has('python3')
-  Plug 'Shougo/deoplete.nvim'
-  if !has('nvim')
+if has('nvim')
+  if has('python3')
+    Plug 'Shougo/deoplete.nvim'
     Plug 'roxma/nvim-yarp'
     Plug 'roxma/vim-hug-neovim-rpc'
   endif
 endif
 
 " Search fzf wrapper
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " Tmux integration
@@ -92,6 +91,8 @@ Plug 'vim-airline/vim-airline'
 
 " Colors/syntax
 Plug 'morhetz/gruvbox'
+"Plug 'rakr/vim-one'
+Plug 'arcticicestudio/nord-vim'
 
 " Customize start screen
 Plug 'mhinz/vim-startify'
@@ -122,13 +123,15 @@ let g:startify_custom_header = []
 
 " neomake
 call neomake#configure#automake('w')
-let g:neomake_open_list = 2
+let g:neomake_open_list = 3
 let g:neomake_python_enabled_makers = ['python', 'flake8']
 let g:neomake_javascript_enabled_makers = ['eslint']
 
 " deoplete
-let g:deoplete#enable_at_startup = 1
-call deoplete#custom#option('ignore_sources', {'_': ['buffer']})
+if has('nvim')
+  let g:deoplete#enable_at_startup = 1
+  call deoplete#custom#option('ignore_sources', {'_': ['buffer']})
+endif
 " navigate suggestions with Tab
 inoremap <expr> <C-i> pumvisible() ? "\<C-n>" : "\<C-i>"
 
@@ -137,12 +140,13 @@ map <leader><C-p> :Files<CR>
 
 " Use Ag for search
 " let g:ackprg = 'ag --nogroup --nocolor --column'
+let g:fzf_tags_command = 'ctags -R'
 let g:ackprg = 'ag --vimgrep'
 
 " nerdtree as netrw, not project drawer
 let NERDTreeHijackNetrw=1
 " Ignore files
-let NERDTreeIgnore=['\.pyc$','\~$','\.git$','\.svn$','tags','DS_Store','\.swp$']
+let NERDTreeIgnore=['\.pyc$','\~$','\.git$','\.svn$','.tags','DS_Store','\.swp$']
 let NERDTreeShowHidden=1
 
 " vim-airline
@@ -156,13 +160,18 @@ set updatetime=250
 " simplyfold
 let g:SimpylFold_docstring_preview=1
 
-set t_Co=256
+"set t_Co=256
 " colorscheme
-set background=dark
+set termguicolors
+
 let g:gruvbox_contrast_light='hard'
 let g:gruvbox_contrast_dark='hard'
 
-:silent! colorscheme gruvbox
+":silent! colorscheme gruvbox
+":silent! colorscheme one
+let g:nord_italic_comments = 1
+:silent! colorscheme nord
+set background=dark
 
 "######################################################################
 " KEYMAPS
@@ -174,12 +183,10 @@ vnoremap <space> zf
 
 " visual copy/cut to os clipboard
 if has("unix")
-  vnoremap <leader><C-c> "+y
-  vnoremap <leader><C-d> "+d
+  vnoremap <C-c> "+y
   let s:uname = system("uname -s")
   if s:uname == "Darwin"
-    vmap <leader><C-c> :!pbcopy<CR>
-    vmap <leader><C-d> :w !pbcopy<CR><CR>
+    vmap <C-c> :!pbcopy<CR>
   endif
 endif
 
