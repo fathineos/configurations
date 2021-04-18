@@ -73,7 +73,7 @@ function notify() {
 
 # cli search for torrents
 function torrents {
-    docker run --rm -it --name=we-get macgyverbass/we-get --search $@
+    docker run --rm -it --name=we-get fathineos/we-get --search $@
 }
 
 function subs {
