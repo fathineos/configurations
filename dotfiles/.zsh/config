@@ -8,9 +8,10 @@ PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 export OPEN_DEFAULT='open'
 
 # Environmental Varialbes
-export LANG=en_US.UTF-8
+export DOCKER_HOST=unix:///run/user/1000/docker.sock
 export EDITOR='vim'
 export GPG_TTY=$(tty)
+export LANG=en_US.UTF-8
 
 # fzf respect git ignore
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
