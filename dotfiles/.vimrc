@@ -84,9 +84,6 @@ Plug 'dhruvasagar/vim-table-mode'
 " Better folding for python
 Plug 'tmhedberg/SimpylFold'
 
-" status/tabline
-Plug 'vim-airline/vim-airline'
-
 " Helper to open github
 Plug 'ruanyl/vim-gh-line'
 
