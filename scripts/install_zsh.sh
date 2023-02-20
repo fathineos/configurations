@@ -18,7 +18,4 @@ if [ ! -d $HOME/.oh-my-zsh ]; then
     ~/.oh-my-zsh 1>/dev/null
 fi
 
-whiptail \
-  --msgbox \
-  --title "zsh installation" \
-  "Run chsh to change default shell" 25 80
+echo "Run \033[31mchsh -s /bin/zsh\033[0m to change default shell"

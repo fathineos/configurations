@@ -48,3 +48,5 @@ bindkey -a '^[[3~' delete-char
 for f in $HOME/.zsh/aliases*; do
     source $f;
 done
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

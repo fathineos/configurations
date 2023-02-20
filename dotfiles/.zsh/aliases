@@ -7,13 +7,6 @@ alias downloads="cd $HOME/Downloads"
 alias ..='cd ..'
 alias ...='cd ../..'
 
-if [[ $(uname) == 'Linux' ]]; then
-    alias upd='sudo apt update -qq && sudo apt --force-yes -q upgrade'
-    alias ls='ls --color=auto'
-elif [[ $(uname) == 'Darwin' ]]; then
-    alias upd='brew update && brew upgrade'
-fi
-
 # Listing
 alias ll='ls -alF'
 alias la='ls -A'
@@ -88,11 +81,6 @@ function subs {
 }
 
 ###############################################################################
-# SERVICES
-###############################################################################
-alias ttrss='docker run -d --restart=always --link ttrss-db:db -e TTRSS_PORT=8080 -e DB_HOST=db -e DB_NAME=ttrss -e DB_USER=ttrss -e DB_PASS=ttrss -e DB_PORT=5432 -e TTRSS_SELF_URL=localhost:8080 -e TTRSS_PROTO=http -e TTRSS_URL=pi.rss:8080 -p 0.0.0.0:8080:8080 --name ttrss ttrss'
-
-###############################################################################
 # REUSABLE FUNCTIONS
 ###############################################################################
 
@@ -101,36 +89,6 @@ alias psgrep='ps aux | grep -v grep | grep -i -e VSZ -e'
 function parent_process_id() {
     ps hf -opid -C $1 | awk '{ print $1; exit }'
 }
-
-###############################################################################
-# HARDWARE
-###############################################################################
-
-if [[ $(uname) == 'Darwin' ]]; then
-    alias wifi_off='networksetup -setairportpower en0 off'
-    alias wifi_on='networksetup -setairportpower en0 on'
-    alias bluetooth_off='blueutil --power off'
-    alias bluetooth_on='blueutil --power on'
-    alias home='bluetooth_on; wifi_on'
-elif [[ $(uname) == 'Linux' ]]; then
-    function xinput_device_id {
-        xinput list | grep $1 | awk '{print $6}' | cut -c4-
-    }
-    function xinput_toggle_device {
-        device=$(xinput_device_id $1);
-        state=$(xinput list-props "$device" | grep "Device Enabled" | grep -o "[01]$");
-
-        if [ $state -eq '1' ]; then
-            print "Disabling device $1"
-            xinput --disable $device;
-        else
-            print "Enabling device $1"
-            xinput --enable $device;
-        fi
-    }
-
-    alias trackpad_toggle='xinput_toggle_device TouchPad'
-fi
 
 ###############################################################################
 # OTHER

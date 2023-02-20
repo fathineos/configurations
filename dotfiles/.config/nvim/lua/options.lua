@@ -1,7 +1,7 @@
 -- :help options
 -- template
 vim.opt.backup = false                          -- creates a backup file
-vim.opt.clipboard = "tmux"               -- allows neovim to access the system clipboard
+vim.opt.clipboard = "unnamedplus"               -- allows neovim to access the system clipboard
 vim.opt.cmdheight = 2                           -- more space in the neovim command line for displaying messages
 vim.opt.completeopt = { "menuone", "noselect" } -- mostly just for cmp
 vim.opt.conceallevel = 0                        -- so that `` is visible in markdown files
@@ -35,6 +35,7 @@ vim.opt.scrolloff = 5                           -- is one of my fav
 -- vim.opt.sidescrolloff = 8
 
 -- custom
--- vim.opt.foldmethod = "indend"
+vim.opt.foldmethod = "manual"
+-- vim.opt.foldexprt = ""
 -- vim.opt.backspace = 2
-vim.opt.colorcolumn="72,80,120,121,122"
+vim.opt.colorcolumn="80,88"

@@ -33,21 +33,16 @@ end
 return packer.startup(function(use)
   -- My plugins here
   use "wbthomason/packer.nvim" -- Have packer manage itself
-  -- use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
   use "nvim-lua/plenary.nvim" -- Useful lua functions used ny lots of plugins
-  -- use "windwp/nvim-autopairs" -- Autopairs, integrates with both cmp and treesitter
-  use "numToStr/Comment.nvim" -- Easily comment stuff
+  use "scrooloose/nerdcommenter"
   use "kyazdani42/nvim-web-devicons"
   use "kyazdani42/nvim-tree.lua"
-  -- use "akinsho/bufferline.nvim"
-  -- use "moll/vim-bbye"
-  -- use 'nvim-lualine/lualine.nvim'
-  -- use "akinsho/toggleterm.nvim"
-  -- use "ahmedkhalf/project.nvim"
-  -- use 'lewis6991/impatient.nvim'
-  -- use "lukas-reineke/indent-blankline.nvim"
-  -- use 'goolord/alpha-nvim'
-  -- use "antoinemadec/FixCursorHold.nvim" -- This is needed to fix lsp doc highlight
+  use "scrooloose/nerdtree"
+  use "ruanyl/vim-gh-line"
+  use "majutsushi/tagbar"
+  use "tmhedberg/SimpylFold"
+  use "airblade/vim-gitgutter"
+  use "lukas-reineke/indent-blankline.nvim"
   
   -- Tmux integration
   -- Navigate between tmux panes and vim splits seamlessly
@@ -55,7 +50,7 @@ return packer.startup(function(use)
 
   -- FocusGained and FocusLost autocommand events while in tmux. To
   -- autoreload externally modified files
-  use 'tmux-plugins/vim-tmux-focus-events'
+  use "tmux-plugins/vim-tmux-focus-events"
 
   use "junegunn/fzf.vim"
   use "junegunn/fzf"
@@ -63,37 +58,71 @@ return packer.startup(function(use)
   -- Colorschemes
   use "morhetz/gruvbox"
   use "arcticicestudio/nord-vim"
-
-  -- cmp plugins
-  use "hrsh7th/nvim-cmp"                     -- The completion plugin
-  use "hrsh7th/cmp-buffer"                   -- buffer completions
-  use "hrsh7th/cmp-path"                     -- path completions
-  use "hrsh7th/cmp-cmdline"                  -- cmdline completions
-  use "saadparwaiz1/cmp_luasnip"             -- snippet completions
-  use "hrsh7th/cmp-nvim-lsp"
+  use "rakr/vim-two-firewatch"
+  use "endel/vim-github-colorscheme"
+  use "wimstefan/Lightning"
 
   -- snippets
   use "L3MON4D3/LuaSnip"                     --snippet engine
   use "rafamadriz/friendly-snippets"
 
-  -- LSP
-  use "neovim/nvim-lspconfig"                -- enable LSP
-  use "williamboman/nvim-lsp-installer"      -- LSP installer
-  -- use "tamago324/nlsp-settings.nvim"      -- language server settings defined in json for
-  -- use "jose-elias-alvarez/null-ls.nvim"   -- for formatters and linters
+  -- Completion
+  use {
+    "ms-jpq/coq_nvim",
+    branch = "coq",
+    event = "VimEnter",
+    opt = true,
+    run = ":COQdeps",
+    config = function()
+      require("config.coq").setup()
+    end,
+    requires = {
+      { "ms-jpq/coq.artifacts", branch = "artifacts" },
+      { "ms-jpq/coq.thirdparty", branch = "3p", module = "coq_3p" },
+    },
+    disable = false,
+  }
 
-  -- Telescope
-  -- use "nvim-telescope/telescope.nvim"
+  use {
+      "hrsh7th/nvim-cmp",
+      event = "InsertEnter",
+      opt = true,
+      config = function()
+        require("config.cmp").setup()
+      end,
+      wants = { "LuaSnip" },
+      requires = {
+        "hrsh7th/cmp-buffer",
+        "hrsh7th/cmp-path",
+        "hrsh7th/cmp-nvim-lua",
+        "hrsh7th/cmp-cmdline",
+        "saadparwaiz1/cmp_luasnip",
+        "hrsh7th/cmp-nvim-lsp",
+        {
+          "L3MON4D3/LuaSnip",
+          wants = "friendly-snippets",
+          config = function()
+            require("config.luasnip").setup()
+          end,
+        },
+        "rafamadriz/friendly-snippets",
+      },
+      disable = true,
+    }
 
-  -- Treesitter
-  -- use {
-  --   "nvim-treesitter/nvim-treesitter",
-  --   run = ":TSUpdate",
-  -- }
-  -- use "JoosepAlviste/nvim-ts-context-commentstring"
-
-  -- Git
-  -- use "lewis6991/gitsigns.nvim"
+  use {
+    "neovim/nvim-lspconfig",
+    opt = true,
+    event = "BufReadPre",
+    wants = { "nvim-lsp-installer", "lsp_signature.nvim", "coq_nvim" },  -- for coq.nvim
+    config = function()
+      require("config.lsp").setup()
+    end,
+    requires = {
+      "williamboman/nvim-lsp-installer",
+      "ray-x/lsp_signature.nvim",
+    },
+  }
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins

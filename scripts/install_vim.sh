@@ -1,32 +1,32 @@
 #!/bin/sh
 set -e
 
+if ! which nvim >/dev/null; then
+  if which snap >/dev/null; then
+    sudo snap install --beta nvim --classic
+  else
+    sudo apt-get install --assume-yes neovim 1>/dev/null
+  fi
+fi
 sudo apt-get install --assume-yes \
-  neovim \
-  python3-pip \
-  silversearcher-ag \
-  1>/dev/null
+    python3-pip \
+    python3-venv \
+    silversearcher-ag \
+    1>/dev/null
+
+pip install --user neovim
 
 if [ ! -d $HOME/configurations ]; then
   git clone git@github.com:fathineos/configurations.git \
     $HOME/configurations || true 1>/dev/null
 fi
 
-mkdir -p $HOME/.vim
-ln -sf $HOME/configurations/dotfiles/.vimrc $HOME/.vimrc
-
 if [ ! -d $HOME/.config/nvim ]; then
   mkdir -p $HOME/.config/nvim
-  cat >> $HOME/.config/nvim/init.vim <<EOL
-set runtimepath^=~/.vim runtimepath+=~/.vim/after
-let &packpath=&runtimepath
-source ~/.vimrc
-EOL
 fi
-
-# needed by deoplete package
-pip3 install --user --upgrade \
-  pynvim \
-  msgpack>=1.0.0 \
-  1>/dev/null
-vim +PluginInstall +qall
+if [ ! -d $HOME/.config/nvim/lua ]; then
+  rm -rf $HOME/.config/nvim && \
+    ln -sf $HOME/configurations/dotfiles/.config/nvim $HOME/.config/
+fi
+nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+nvim --headless -c 'autocmd COQdeps'

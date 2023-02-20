@@ -18,7 +18,4 @@ if [ ! -d $HOME/.tmux/plugins/tpm ]; then
     $HOME/.tmux/plugins/tpm 1>/dev/null
 fi
 
-whiptail \
-  --msgbox \
-  --title "tmux installation" \
-  "Start tmux and run Ctlr+I to install plugins" 25 80
+$HOME/.tmux/plugins/tpm/bin/install_plugins
