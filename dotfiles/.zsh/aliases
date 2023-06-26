@@ -14,10 +14,45 @@ alias l='ls -CF'
 
 # Other
 alias e=$EDITOR
+alias vim=$EDITOR
+
+alias cat='batcat'
+alias cd='z'
+alias ls='exa --icons --color=always --group-directories-first'
 
 ###############################################################################
 # UTILS
 ###############################################################################
+
+function greps {
+  local cmd="cat"
+  for pattern in "$@"; do
+    cmd+=" | grep -e '$pattern'"
+  done
+  eval "$cmd"
+}
+
+function dgetallcontainers() {
+	docker ps --format "{{.Names}}";
+}
+
+function dgetcontainer() {
+  PODS=$(dgetallcontainers);
+  FILTERED_CONTAINERS=$(echo $PODS | greps ${@:1});
+  echo $FILTERED_CONTAINERS | tail -n 1
+}
+
+function dexec() {
+  CONTAINER=$(dgetcontainer $@);
+  echo "Connecting to \033[31m$CONTAINER\033[0m"
+	docker exec -it $CONTAINER bash;
+}
+
+function dlogs() {
+  CONTAINER=$(dgetcontainer $@);
+  echo "Logs of \033[31m$CONTAINER\033[0m"
+	docker logs -f $CONTAINER;
+}
 
 function kills { sudo kill -15 $(pgrep "$1"); }
 function killf { sudo kill -9 $(pgrep "$1"); }
@@ -118,3 +153,4 @@ alias encrypt="gpg --encrypt --recipient 'File Encryption Key'"
 function decrypt() {
     gpg --output $2 --decrypt $1
 }
+alias lzd='docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock:ro -v /$HOME/.config/lazydocker:/.config/jesseduffield/lazydocker lazyteam/lazydocker'

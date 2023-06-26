@@ -54,7 +54,7 @@ for CHOICE in $CHOICES; do
 	    "Register public key in .ssh to Github" 25 80
     ;;
   "fonts-config")
-    curl https://raw.githubusercontent.com/fathineos/configurations/master/scripts/install_fonts.sh | bash
+    curl https://raw.githubusercontent.com/fathineos/configurations/master/scripts/install_fonts.sh | bash;
     ;;
   *)
     echo "Unsupported item $CHOICE!" >&2
@@ -77,16 +77,13 @@ CHOICES=$(whiptail \
 	tmux tmux OFF \
 	neovim neovim OFF \
 	zsh zsh OFF \
+  utils "common util replacements (ag, exa, zoxide)" OFF \
 	3>&1 1>&2 2>&3)
 
 for CHOICE in $CHOICES; do
   case "$CHOICE" in
   "docker")
-    curl -sSL https://get.docker.com/ | sudo sh
-    sudo sh -eux <<EOF
-apt install --assume-yes uidmap
-EOF
-    dockerd-rootless-setuptool.sh install
+    curl https://raw.githubusercontent.com/fathineos/configurations/master/scripts/install_docker.sh | bash
     ;;
   "neovim")
     curl https://raw.githubusercontent.com/fathineos/configurations/master/scripts/install_vim.sh | bash
@@ -96,6 +93,9 @@ EOF
     ;;
   "zsh")
     curl https://raw.githubusercontent.com/fathineos/configurations/master/scripts/install_zsh.sh | bash
+    ;;
+  "utils")
+    curl https://raw.githubusercontent.com/fathineos/configurations/master/scripts/install_utils.sh | bash;
     ;;
   *)
     echo "Unsupported item $CHOICE!" >&2

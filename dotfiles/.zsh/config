@@ -2,6 +2,7 @@ PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 [ -d $HOME/.local/bin ] && PATH=$PATH:$HOME/.local/bin
 [ -d $HOME/bin ] && PATH=$PATH:$HOME/bin
 [ -d /snap/bin ] && PATH=$PATH:/snap/bin
+[ -d /usr/local/go ] && PATH=$PATH:/usr/local/go/bin
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

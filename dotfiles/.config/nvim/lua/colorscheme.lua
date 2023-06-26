@@ -1,1 +1,1 @@
-vim.cmd "colorscheme gruvbox"
+vim.cmd("silent! colorscheme gruvbox")
