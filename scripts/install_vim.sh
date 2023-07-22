@@ -9,10 +9,9 @@ fi
 sudo apt-get install --assume-yes -qq \
     python3-pip \
     python3-venv \
+    python3-neovim \
     silversearcher-ag \
     1>/dev/null
-
-pip install --user neovim
 
 if [ ! -d $HOME/configurations ]; then
   git clone git@github.com:fathineos/configurations.git \
