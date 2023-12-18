@@ -9,6 +9,6 @@ if [ ! -d $HOME/configurations ]; then
 fi
 if [ ! -d $HOME/.fonts ]; then
   mkdir -p $HOME/.fonts
-  ls -d $HOME/configurations/fonts/* | xargs ln -st $HOME/.fonts/
+  /usr/bin/ls -d $HOME/configurations/fonts/* | xargs ln -st $HOME/.fonts/
   sudo fc-cache -f -v
 fi

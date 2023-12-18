@@ -45,7 +45,7 @@ function dgetcontainer() {
 function dexec() {
   CONTAINER=$(dgetcontainer $@);
   echo "Connecting to \033[31m$CONTAINER\033[0m"
-	docker exec -it $CONTAINER bash;
+	docker exec -it $CONTAINER sh;
 }
 
 function dlogs() {
@@ -67,25 +67,24 @@ alias youtube-dl-mp3="docker run --name=youtube-dl --rm -u $(id -u):$(id -g) -v 
 wtr() { city=${1-athens}; curl http://wttr.in/${city}; }
 myip() { curl http://ipecho.net/plain; }
 
+alias logseq='docker start logseq || docker run -d --name=logseq --restart unless-stopped -p 127.0.0.1:3001:80 ghcr.io/logseq/logseq-webapp:latest'
+
 # glances: System monitoring tool in python
 # @see https://nicolargo.github.io/glances/
 alias docker_glances='docker run --name=glances --rm -v /var/run/docker.sock:/var/run/docker.sock:ro --pid host -it fathineos/glances'
 
 # search devdocs documentation shortcut in browser
 function docs() {
-    $URL=''
     ARGS=$@
-    $URL="https://devdocs.io/#q=${ARGS// /+}"
+    URL="https://devdocs.io/#q=${ARGS// /+}"
     echo $URL
     open $URL
 }
 
 # simplified, common man pages
 function tldr() {
-    $URL=''
     ARGS=$@
     URL="cht.sh/${ARGS// /+}"
-    echo $URL
     curl $URL
 }
 
