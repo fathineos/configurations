@@ -2,16 +2,13 @@
 set -e
 
 if ! which nvim >/dev/null; then
-  sudo add-apt-repository --yes ppa:neovim-ppa/unstable;
-  sudo apt update -qq --assume-yes;
-  sudo apt-get install --assume-yes neovim 1>/dev/null
+  sudo apt-get install --assume-yes -qq \
+    curl \
+    1>/dev/null && \
+  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage && \
+  chmod u+x nvim.appimage && \
+  sudo mv nvim.appimage /usr/local/bin/nvim
 fi
-sudo apt-get install --assume-yes -qq \
-    python3-pip \
-    python3-venv \
-    python3-neovim \
-    silversearcher-ag \
-    1>/dev/null
 
 if [ ! -d $HOME/configurations ]; then
   git clone git@github.com:fathineos/configurations.git \
@@ -25,6 +22,3 @@ if [ ! -d $HOME/.config/nvim/lua ]; then
   rm -rf $HOME/.config/nvim && \
     ln -sf $HOME/configurations/dotfiles/.config/nvim $HOME/.config/
 fi
-nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
-cd ~/.local/share/nvim/site/pack/packer/opt/coq_nvim &&
-  python3 -m coq deps
